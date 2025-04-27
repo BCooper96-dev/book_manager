@@ -1,0 +1,94 @@
+{# templates/book/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Book List{% endblock %}
+
+{% block body %}
+    <h1>Book List</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Genre</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody id="bookList">
+            {% for i, book in books %}
+                {% if i < 5 %}
+                    <tr>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td>{{ book.genre }}</td>
+                        <td>{{ book.summary }}</td>
+                    </tr>
+                {% endif %}
+            {% else %}
+                <tr><td colspan="4">No books found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="hiddenBooks" style="display: none;">
+        {% for i, book in books %}
+            {% if i >= 5 %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.genre }}</td>
+                    <td>{{ book.summary }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if books|length > 5 %}
+        <button id="loadMoreBtn" class="btn btn-secondary mt-3">Load More</button>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const hiddenBooks = document.getElementById('hiddenBooks');
+            const bookListTbody = document.getElementById('bookList');
+
+            if (loadMoreBtn && hiddenBooks) {
+                loadMoreBtn.addEventListener('click', function() {
+                    hiddenBooks.style.display = 'table-row-group'; // Or 'block' if you structure differently
+                    loadMoreBtn.style.display = 'none'; // Hide the button after loading
+                });
+            }
+        });
+    </script>
+
+    <h2>Add a New Book</h2>
+    <div class="form-box">
+        <form method="post" action="{{ path('book_new') }}" data-turbo="false">
+            {{ form_widget(form._token) }}
+            {{ form_errors(form) }}
+            <div class="mb-3">
+                {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.title) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.author, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.author, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.author) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.genre, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.genre, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.genre) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.summary, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.summary, {'attr': {'class': 'form-control', 'rows': 3}}) }}
+                {{ form_errors(form.summary) }}
+            </div>
+            <button type="submit" class="btn btn-primary">Add Book</button>
+        </form>
+    </div>
+{% endblock %}
