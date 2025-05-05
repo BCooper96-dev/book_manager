@@ -15,7 +15,7 @@ class BookController extends AbstractController
     #[Route('/', name: 'book_index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $books = $entityManager->getRepository(Book::class)->findBy([], [], 5);
+        $books = $entityManager->getRepository(Book::class)->findAll();
         $form = $this->createForm(BookType::class);
 
         return $this->render('book/index.html.twig', [

@@ -3,6 +3,16 @@
 
 {% block title %}Book List{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Initially hide books after the first 5 */
+        #bookList tr:nth-child(n+6) {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <h1>Book List</h1>
 
@@ -16,33 +26,18 @@
             </tr>
         </thead>
         <tbody id="bookList">
-            {% for i, book in books %}
-                {% if i < 5 %}
-                    <tr>
-                        <td>{{ book.title }}</td>
-                        <td>{{ book.author }}</td>
-                        <td>{{ book.genre }}</td>
-                        <td>{{ book.summary }}</td>
-                    </tr>
-                {% endif %}
-            {% else %}
-                <tr><td colspan="4">No books found.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div id="hiddenBooks" style="display: none;">
-        {% for i, book in books %}
-            {% if i >= 5 %}
+            {% for book in books %}
                 <tr>
                     <td>{{ book.title }}</td>
                     <td>{{ book.author }}</td>
                     <td>{{ book.genre }}</td>
                     <td>{{ book.summary }}</td>
                 </tr>
-            {% endif %}
-        {% endfor %}
-    </div>
+            {% else %}
+                <tr><td colspan="4">No books found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     {% if books|length > 5 %}
         <button id="loadMoreBtn" class="btn btn-secondary mt-3">Load More</button>
@@ -51,13 +46,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loadMoreBtn = document.getElementById('loadMoreBtn');
-            const hiddenBooks = document.getElementById('hiddenBooks');
             const bookListTbody = document.getElementById('bookList');
+            const hiddenBookRows = document.querySelectorAll('#bookList tr:nth-child(n+6)'); // Select the initially hidden rows
 
-            if (loadMoreBtn && hiddenBooks) {
+            if (loadMoreBtn) {
                 loadMoreBtn.addEventListener('click', function() {
-                    hiddenBooks.style.display = 'table-row-group'; // Or 'block' if you structure differently
-                    loadMoreBtn.style.display = 'none'; // Hide the button after loading
+                    hiddenBookRows.forEach(row => {
+                        row.style.display = 'table-row'; // Show the hidden rows
+                    });
+                    loadMoreBtn.style.display = 'none'; // Hide the button
                 });
             }
         });
